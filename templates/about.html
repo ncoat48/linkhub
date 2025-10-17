@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - LinkHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-link"></i>
+                    <span>LinkHub</span>
+                </div>
+                <div class="user-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-outline">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="content-left">
+                <section class="hero">
+                    <h1>About LinkHub</h1>
+                    <p>Connecting people through amazing content</p>
+                </section>
+
+                <div class="category-block">
+                    <div class="about-content">
+                        <h2>Our Mission</h2>
+                        <p>LinkHub was created with a simple mission: to help people discover, share, and discuss the
+                            most valuable content from across the web. We believe that great ideas deserve to be shared,
+                            and amazing content should be accessible to everyone.</p>
+
+                        <h2>What We Do</h2>
+                        <p>LinkHub is a content curation platform where users can:</p>
+                        <ul>
+                            <li><strong>Share</strong> interesting links with the community</li>
+                            <li><strong>Discover</strong> new content across various categories</li>
+                            <li><strong>Connect</strong> with like-minded people</li>
+                            <li><strong>Organize</strong> their favorite content with bookmarks</li>
+                            <li><strong>Engage</strong> through likes and discussions</li>
+                        </ul>
+
+                        <h2>Our Story</h2>
+                        <p>Founded in 2023, LinkHub emerged from the need for a centralized platform where content
+                            enthusiasts could gather without the noise of traditional social media. We wanted to create
+                            a space focused purely on quality content and meaningful connections.</p>
+
+                        <h2>Features</h2>
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <i class="fas fa-share-alt"></i>
+                                <h3>Easy Sharing</h3>
+                                <p>Share links with custom titles, descriptions, and images</p>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-filter"></i>
+                                <h3>Smart Filtering</h3>
+                                <p>Filter content by category and sensitivity preferences</p>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-bookmark"></i>
+                                <h3>Personal Bookmarks</h3>
+                                <p>Save your favorite links for later reading</p>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-heart"></i>
+                                <h3>Community Engagement</h3>
+                                <p>Like and discover what others find valuable</p>
+                            </div>
+                        </div>
+
+                        <h2>Join Our Community</h2>
+                        <p>Whether you're a content creator, curator, or just someone who loves discovering new things,
+                            LinkHub has something for you. Join thousands of users who are already sharing and
+                            discovering amazing content every day.</p>
+
+                        <div class="cta-section">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                <i class="fas fa-rocket"></i> Get Started
+                            </a>
+                            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray);">
+                                Ready to start your content discovery journey?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h2>Quick Stats</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5000+</div>
+                            <div class="stat-label">Links Shared</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Categories</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h2>Connect With Us</h2>
+                    <div class="social-links">
+                        <a href="#" class="btn btn-outline"
+                            style="width: 100%; margin-bottom: 0.5rem; justify-content: center;">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="btn btn-outline"
+                            style="width: 100%; margin-bottom: 0.5rem; justify-content: center;">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        <a href="#" class="btn btn-outline" style="width: 100%; justify-content: center;">
+                            <i class="fab fa-discord"></i> Discord
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinkHub</h3>
+                    <p>Discover and share the best content from across the web. Join our community of creators and
+                        enthusiasts.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2023 LinkHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

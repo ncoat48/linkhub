@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub | Share & Discover Amazing Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-link"></i>
+                    <span>LinkHub</span>
+                </div>
+
+                <div class="user-actions">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search links..." />
+                        <button class="btn btn-outline" id="searchBtn">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+
+
+                    <!-- In the header section, replace the user menu -->
+                    {% if user %}
+                    <div class="user-menu">
+                        <span>Welcome, {{ user.username }}</span>
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline" style="margin-left: 10px;">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline" style="margin-left: 10px;">Logout</a>
+                    </div>
+
+
+                    {% else %}
+                    <button class="btn btn-outline" id="loginBtn">Login</button>
+                    <button class="btn btn-primary" id="signupBtn"><i class="fas fa-user-plus"></i> Sign Up</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Left Content -->
+            <div class="content-left">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <h1>Discover & Share Amazing Content</h1>
+                    <p>LinkHub is the platform where creators and enthusiasts share the best content from across the
+                        web. Find inspiration, learn something new, or share your discoveries.</p>
+                    {% if not user %}
+                    <button class="btn btn-primary" id="getStartedBtn"><i class="fas fa-rocket"></i> Get
+                        Started</button>
+                    {% else %}
+                    <button class="btn btn-primary" id="addLinkHeroBtn"><i class="fas fa-plus-circle"></i> Share a
+                        Link</button>
+                    {% endif %}
+                </section>
+
+                <!-- Category Blocks -->
+                {% for category_name, items in categories.items() %}
+                <div class="category-block" data-category="{{ category_name.lower() }}">
+                    <div class="category-header">
+                        <h2 class="category-title">{{ category_name }}</h2>
+                        <a href="#" class="btn btn-outline view-all-btn"
+                            style="color: var(--dark); border-color: var(--light-gray);">View All</a>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="arrow left"><i class="fas fa-chevron-left"></i></div>
+                        <div class="cards-wrapper">
+                            {% for link in items %}
+                            <div class="card" data-id="{{ link.id }}" data-url="{{ link.url }}" {% if link.is_sensitive
+                                %}data-sensitive="true" {% endif %}>
+
+                                <div class="card-image">
+                                    <img src="{{ link.image_url }}" alt="{{ link.title }}"
+                                        onerror="this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
+                                    {% if link.is_sensitive %}
+                                    <div class="sensitive-badge"><i class="fas fa-exclamation-triangle"></i> Sensitive
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="card-content">
+                                    <h3>
+                                        {{ link.title }}
+                                        {% if link.is_sensitive %}
+                                        <span class="sensitive-indicator">
+                                            <i class="fas fa-exclamation-triangle"></i>Sensitive
+                                        </span>
+                                        {% endif %}
+                                    </h3>
+                                    <p>{{ link.description }}</p>
+
+                                    <div class="card-meta">
+                                        <span>{{ link.author }} • {{ link.likes }} likes</span>
+                                        <div class="card-actions">
+                                            <button class="like-btn {% if link.id in user_likes %}liked{% endif %}">
+                                                <i
+                                                    class="{% if link.id in user_likes %}fas{% else %}far{% endif %} fa-heart"></i>
+                                            </button>
+                                            <button
+                                                class="bookmark-btn {% if link.id in user_bookmarks %}bookmarked{% endif %}">
+                                                <i
+                                                    class="{% if link.id in user_bookmarks %}fas{% else %}far{% endif %} fa-bookmark"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            {% if not items %}
+                            <div class="category-empty-message">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <p>No links found in this category yet.</p>
+                                {% if user %}
+                                <p>Be the first to share a link!</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="arrow right"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="sidebar">
+                <!-- User Profile -->
+                {% if user %}
+                <div class="user-profile">
+                    <div class="avatar">{{ user.username[0]|upper }}</div>
+                    <div class="user-info">
+                        <h3>{{ user.full_name }}</h3>
+                        <p>@{{ user.username }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- In the sidebar section, update the filter indicator -->
+                <div class="sidebar-section">
+                    <h2>Content Filter</h2>
+                    <div class="filter-indicator">
+                        <i class="fas fa-filter"></i>
+                        <span class="filter-status {% if not show_sensitive %}active{% endif %}" id="filterStatusText">
+                            {% if show_sensitive %}Showing All Content{% else %}Sensitive Content Hidden{% endif %}
+                        </span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--gray); margin-top: 0.5rem;">
+                        Toggle sensitive content filtering using the button in the header.
+                    </p>
+
+                </div>
+
+                <!-- Filter Section -->
+                <div class="sidebar-section">
+                    <h2>Filter by Category</h2>
+                    <div class="filter-options">
+                        <div class="filter-option active" data-category="all">
+                            <i class="fas fa-globe"></i>
+                            <span>All Categories</span>
+                        </div>
+                        <div class="filter-option" data-category="technology">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>Technology</span>
+                        </div>
+                        <div class="filter-option" data-category="design">
+                            <i class="fas fa-palette"></i>
+                            <span>Design</span>
+                        </div>
+                        <div class="filter-option" data-category="business">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Business</span>
+                        </div>
+                        <div class="filter-option" data-category="health">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>Health</span>
+                        </div>
+                        <div class="filter-option" data-category="gaming">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Gaming</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trending Section
+                <div class="sidebar-section">
+                    <h2>Trending Now</h2>
+                    <div class="filter-options">
+                        <div class="filter-option">
+                            <i class="fas fa-hashtag"></i>
+                            <span>#AIRevolution</span>
+                        </div>
+                        <div class="filter-option">
+                            <i class="fas fa-hashtag"></i>
+                            <span>#SustainableTech</span>
+                        </div>
+                        <div class="filter-option">
+                            <i class="fas fa-hashtag"></i>
+                            <span>#RemoteWork</span>
+                        </div>
+                        <div class="filter-option">
+                            <i class="fas fa-hashtag"></i>
+                            <span>#Web3</span>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- About Section -->
+                <div class="sidebar-section">
+                    <h2>About LinkHub</h2>
+                    <p>LinkHub is a premium content curation platform where users discover, share, and discuss the most
+                        valuable resources from across the web.</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary" id="addLinkSidebarBtn" style="width: 100%;"><i
+                                class="fas fa-plus-circle"></i> Add Your Link</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>LinkHub</h3>
+                    <p>Discover and share the best content from across the web. Join our community of creators and
+                        enthusiasts.</p>
+
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+
+
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2023 LinkHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Link Modal -->
+    <!-- Update the Add Link Modal form -->
+    <div class="modal" id="addLinkModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share a New Link</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="addLinkForm">
+                <div class="form-group">
+                    <label for="linkTitle">Title</label>
+                    <input type="text" id="linkTitle" class="form-control" placeholder="Enter a descriptive title"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="linkUrl">URL</label>
+                    <input type="url" id="linkUrl" class="form-control" placeholder="https://example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="linkDescription">Description</label>
+                    <textarea id="linkDescription" class="form-control" rows="3"
+                        placeholder="Brief description of the content"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="linkCategory">Category</label>
+                    <select id="linkCategory" class="form-control" required>
+                        <option value="">Select a category</option>
+                        <option value="1">Technology</option>
+                        <option value="2">Design</option>
+                        <option value="3">Business</option>
+                        <option value="4">Health</option>
+                        <option value="5">Gaming</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="linkImage">Image URL (optional)</label>
+                    <input type="url" id="linkImage" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <!-- Sensitive Content Toggle -->
+                <div class="form-group">
+                    <div class="sensitive-toggle-container">
+                        <label class="sensitive-toggle-label">
+                            <input type="checkbox" id="linkSensitive" class="sensitive-toggle">
+                            <span class="sensitive-toggle-slider"></span>
+                            <span class="sensitive-toggle-text">Mark as Sensitive Content</span>
+                        </label>
+                        <div class="sensitive-toggle-help">
+                            <i class="fas fa-info-circle"></i>
+                            Sensitive content will be hidden when the content filter is enabled
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline"
+                        style="flex: 1; color: var(--dark); border-color: var(--light-gray);"
+                        id="cancelAddLink">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Share Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Up Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Your Account</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="form-control" placeholder="Create a password"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" class="form-control" placeholder="Choose a username"
+                        required>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline"
+                        style="flex: 1; color: var(--dark); border-color: var(--light-gray);"
+                        id="cancelSignup">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Login to Your Account</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" class="form-control" placeholder="Enter your username"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password"
+                        required>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline"
+                        style="flex: 1; color: var(--dark); border-color: var(--light-gray);"
+                        id="cancelLogin">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
